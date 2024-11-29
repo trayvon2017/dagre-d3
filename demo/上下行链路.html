@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+<title>Dagre D3 Demo: Arrows</title>
+
+<link rel="stylesheet" href="demo.css" />
+<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script src="./dagre-d3.js"></script>
+
+<style id="css">
+  body {
+    font: 300 14px "Helvetica Neue", Helvetica;
+  }
+
+  svg {
+    background-color: #f2f6fb;
+  }
+
+  .node rect,
+  .node circle,
+  .node ellipse {
+    stroke: #333;
+    fill: #fff;
+    stroke-width: 1px;
+  }
+
+  .edgePath path {
+    stroke: #333;
+    fill: #333;
+    stroke-width: 1.5px;
+  }
+
+  div.node {
+    margin: 10px;
+    display: flex;
+    font-weight: bold;
+    background-color: white;
+    padding: 5px;
+    align-items: center;
+  }
+  div.node span {
+    margin-left: 10px;
+  }
+</style>
+
+<h1>Dagre D3 Demo: Arrows</h1>
+
+<svg id="svg" width="960" height="900px"><g /></svg>
+
+<section>
+  <p>A sample that shows the different arrows available in dagre-d3.</p>
+</section>
+
+<script id="js">
+  // Create a new directed graph
+
+  function nodelabelFormatter(node) {
+    var div = document.createElement("div");
+    div.className = "node";
+    var img = document.createElement("img");
+    img.width = 20;
+    img.src = "./node.png";
+    div.append(img);
+    var span = document.createElement("span");
+    span.innerText = node;
+    div.append(span);
+    return div;
+  }
+
+  const successEdgeConfig = function() {
+    return {
+    label: "正常",
+    style: "stroke: rgb(93, 202, 149); stroke-width: 2px; fill: transparent;",
+    arrowheadStyle: "fill: rgb(93, 202, 149) ;stroke-width:0;",
+    labelStyle: "fill: rgb(93, 202, 149)"
+  }
+  }
+
+  const failEdgeConfig = function () {
+    return {
+    label: "服务异常",
+    style: "stroke: #f66; stroke-width: 2px; stroke-dasharray: 5, 5; fill: transparent;",
+    arrowheadStyle: "fill: #f66 ;stroke-width:0;",
+    labelStyle: "fill: #f66"
+  }
+  }
+  var g = new dagreD3.graphlib.Graph().setGraph({});
+  g.setGraph({
+    nodesep: 20,
+    ranksep: 100,
+    marginx: 20,
+    marginy: 20
+  })
+  g.setNode("网级四区", {
+    label: nodelabelFormatter,
+    padding: 0,
+    style: "stroke-width: 0",
+  });
+  g.setNode("广州三区", {
+    label: nodelabelFormatter,
+    padding: 0,
+    style: "stroke-width: 0",
+  });
+  g.setNode("广州一区", {
+    label: nodelabelFormatter,
+    padding: 0,
+    style: "stroke-width: 0",
+  });
+
+  g.setEdge("网级四区", "广州三区", successEdgeConfig());
+  g.setEdge("广州三区", "广州一区", successEdgeConfig());
+  g.setEdge("广州一区", "广州三区", failEdgeConfig());
+  g.setEdge("广州三区", "网级四区", successEdgeConfig());
+
+  var svg = d3.select(document.getElementById('svg')),
+    inner = svg.select("g");
+
+  // Set up zoom support
+  var zoom = d3.zoom().on("zoom", function () {
+    inner.attr("transform", d3.event.transform);
+  });
+  svg.call(zoom);
+
+  // Create the renderer
+  var render = new dagreD3.render();
+
+  // Run the renderer. This is what draws the final graph.
+  render(inner, g);
+
+  // Center the graph
+  var initialScale = 0.75;
+  svg.call(
+    zoom.transform,
+    d3.zoomIdentity
+      .translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20)
+      .scale(initialScale)
+  );
+
+  svg.attr("height", g.graph().height * initialScale + 40);
+</script>
+
+<script src="demo.js"></script>

@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" href="demo.css">
 <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
-<script src="../dagre-d3.js"></script>
+<script src="./dagre-d3.js"></script>
 
 <!-- Pull in JQuery dependencies -->
 <link rel="stylesheet" href="tipsy.css">
@@ -183,8 +183,19 @@ render(inner, g);
 
 inner.selectAll("g.node")
   .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
-  .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
+  .each(function(v) { 
+    this.addEventListener('click', console.log)
+   });
 
+inner.selectAll("g.edgePath")
+  .attr("title", function(v) {
+    console.log(arguments)
+    console.log(g.edge(v)) 
+    console.log(v)
+  })
+  .each(function(v) { 
+    this.addEventListener('click', () => alert(v.v + v.w))
+   });
 // Center the graph
 var initialScale = 0.75;
 svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));

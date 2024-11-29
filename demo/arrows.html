@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" href="demo.css">
 <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
-<script src="../dagre-d3.js"></script>
+<script src="./dagre-d3.js"></script>
 
 <style id="css">
 body {
@@ -40,9 +40,13 @@ body {
 var g = new dagreD3.graphlib.Graph().setGraph({});
 
 ["normal", "vee", "undirected"].forEach(function(arrowhead) {
-  g.setNode(arrowhead + "1", { label: " " });
-  g.setNode(arrowhead + "2", { label: " " });
+  g.setNode(arrowhead + "1", { label: arrowhead + "1" });
+  g.setNode(arrowhead + "2", { label: arrowhead + "2" });
   g.setEdge(arrowhead + "1", arrowhead + "2", {
+    arrowhead: arrowhead,
+    label: `${arrowhead + "1"}->${arrowhead + "2"}`
+  });
+  g.setEdge(arrowhead + "2", arrowhead + "1", {
     arrowhead: arrowhead,
     label: arrowhead
   });
